@@ -61,21 +61,21 @@ const loginUser = () => {
       });
 }
 
-document.getElementById("signIn").addEventListener("click",loginUser)
 
+document.getElementById("signIn").addEventListener("click",loginUser)
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
     const uid = user.uid;
-    console.log("user is logged in")
-    console.log(user)
-
-    // display none,block
-    // const data = snapshot.val()
-    // data.role
+    console.log("user is logged in")    
+    document.getElementById("login-box").style.display="none"
+    document.getElementById("MainDiv").style.display="block"
 
 
   } else {
+    document.getElementById("MainDiv").style.display="none"
+    document.getElementById("login-box").style.display="block"
+
     console.log("user is signed out")
   }
 });
@@ -88,3 +88,37 @@ document.getElementById("signOut").addEventListener("click", () =>{
         console.log(error)
       });
 })
+
+let i = 0
+
+function AddToTable(){
+  i+=1;
+
+  let Title = document.getElementById("Title");
+  let Category = document.getElementById("Category");
+  let Description = document.getElementById("Description");
+  let Price = document.getElementById("Price");
+  let Images = document.getElementById("Images")
+
+  let output = document.getElementById("tbody")
+
+  output.innerHTML += "<tr><td>"+i+"</td><td>"+Title.value+"</td><td>"+Category.value+"</td><td>"+Description.value+"</td><td>"+Price.value+"</td><td><img height='100' width = '150'src="+Images.value+"></td></tr>";
+
+  // let userId = push(child(ref(database), "users")).key
+
+  // set(ref(database, 'users/' + userId), {
+  //   something: Title
+  // });
+  
+
+}
+
+document.getElementById("Insert").addEventListener("click",AddToTable)
+
+
+function RemoveFromTable(){
+  document.querySelector(".table").deleteRow(i)
+  i-=1;
+}
+
+document.getElementById("Delete").addEventListener("click",RemoveFromTable)
