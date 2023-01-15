@@ -1,13 +1,13 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-import { getDatabase, set ,ref,update } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { getDatabase, set ,ref,update,onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 import { firebaseConfig } from "./firebase.js";
 
 const app =initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const auth = getAuth();
 
-
+// register
 const registerNewUser = () =>{
 
     const email = document.getElementById("register_email").value
@@ -39,6 +39,7 @@ const registerNewUser = () =>{
 document.getElementById("signUp").addEventListener("click",registerNewUser)
 
 
+// login
 const loginUser = () => {
     const login_email = document.getElementById("login_email").value
     const login_password = document.getElementById("login_password").value
@@ -64,6 +65,15 @@ const loginUser = () => {
 
 document.getElementById("signIn").addEventListener("click",loginUser)
 
+let Title = document.getElementById("Title");
+let Category = document.getElementById("Category");
+let Description = document.getElementById("Description");
+let Price = document.getElementById("Price");
+let Images = document.getElementById("Images");
+
+let output = document.getElementById("tbody");
+
+// check if user is logged in
 onAuthStateChanged(auth, (user) => {
   if (user) {
     const uid = user.uid;
@@ -71,54 +81,63 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById("login-box").style.display="none"
     document.getElementById("MainDiv").style.display="block"
 
+    document.getElementById("Insert").addEventListener("click", ()=> {
+      //checks if Image link is a valid image
+      let isImageLink = Images.value.match(/\.(jpeg|jpg|gif|png)$/) != null;
+
+  
+      if(Title.value === "" || Category.value === "" || Description.value === "" || Price.value === "" || Images.value === ""){
+        alert("You forgot to enter some information!")
+      }
+      else if(isImageLink === false){
+        alert("image link is not correct")
+      }
+      else {
+        update(ref(database,"users/" + uid + `/posts` + `/${Title.value}`), {
+          Title: Title.value,
+          Category: Category.value,
+          Description: Description.value,
+          Price: Price.value,
+          Images: Images.value
+        })
+        i+=1;
+      }
+    })
+    onValue(ref(database,"users/" + uid + `/posts` + `/${Title.value}`), (snapshot) => {
+      const data = snapshot.val();
+      if(data !== null){
+        output.innerHTML = ""
+        for(let j = 0; j < Object.keys(data).length; j++){
+          let keys = Object.keys(data)[j]
+          output.innerHTML += "<tr><td>"+ (j+1) +"</td><td>"+data[keys].Title+"</td><td>"+data[keys].Category+"</td><td>"+data[keys].Description+"</td><td>"+data[keys].Price+"</td><td><img height='100' width = '150'src="+data[keys].Images+"></td></tr>";
+        }
+      }
+    })
+
 
   } else {
+    //signed out
     document.getElementById("MainDiv").style.display="none"
     document.getElementById("login-box").style.display="block"
-
-    console.log("user is signed out")
   }
 });
 
-
+// sign out
 document.getElementById("signOut").addEventListener("click", () =>{
     signOut(auth).then(() => {
         console.log("Signed out")
+        output.innerHTML = ""
+        window.location.reload();
+
       }).catch((error) => {
         console.log(error)
       });
 })
 
-let i = 0
 
-function AddToTable(){
-  i+=1;
+// function RemoveFromTable(){
+//   document.querySelector(".table").deleteRow(i)
+//   i-=1;
+// }
 
-  let Title = document.getElementById("Title");
-  let Category = document.getElementById("Category");
-  let Description = document.getElementById("Description");
-  let Price = document.getElementById("Price");
-  let Images = document.getElementById("Images")
-
-  let output = document.getElementById("tbody")
-
-  output.innerHTML += "<tr><td>"+i+"</td><td>"+Title.value+"</td><td>"+Category.value+"</td><td>"+Description.value+"</td><td>"+Price.value+"</td><td><img height='100' width = '150'src="+Images.value+"></td></tr>";
-
-  // let userId = push(child(ref(database), "users")).key
-
-  // set(ref(database, 'users/' + userId), {
-  //   something: Title
-  // });
-  
-
-}
-
-document.getElementById("Insert").addEventListener("click",AddToTable)
-
-
-function RemoveFromTable(){
-  document.querySelector(".table").deleteRow(i)
-  i-=1;
-}
-
-document.getElementById("Delete").addEventListener("click",RemoveFromTable)
+// document.getElementById("Delete").addEventListener("click",RemoveFromTable)
