@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-import { getDatabase, set ,ref,update,onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { getDatabase, set ,ref,update,onValue,push,remove} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 import { firebaseConfig } from "./firebase.js";
 
 const app =initializeApp(firebaseConfig);
@@ -72,6 +72,7 @@ let Price = document.getElementById("Price");
 let Images = document.getElementById("Images");
 
 let output = document.getElementById("tbody");
+let PostCount = document.getElementById("PostCount")
 
 // check if user is logged in
 onAuthStateChanged(auth, (user) => {
@@ -81,6 +82,7 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById("login-box").style.display="none"
     document.getElementById("MainDiv").style.display="block"
 
+    // Input
     document.getElementById("Insert").addEventListener("click", ()=> {
       //checks if Image link is a valid image
       let isImageLink = Images.value.match(/\.(jpeg|jpg|gif|png)$/) != null;
@@ -93,24 +95,45 @@ onAuthStateChanged(auth, (user) => {
         alert("image link is not correct")
       }
       else {
-        update(ref(database,"users/" + uid + `/posts` + `/${Title.value}`), {
+        const postListRef = ref(database, 'users/' + uid + "/posts");
+        const newPostRef = push(postListRef);
+        set(newPostRef, {
           Title: Title.value,
           Category: Category.value,
           Description: Description.value,
           Price: Price.value,
           Images: Images.value
-        })
-        i+=1;
+        });
       }
     })
-    onValue(ref(database,"users/" + uid + `/posts` + `/${Title.value}`), (snapshot) => {
+    
+    //Prints out all posts of user
+    onValue(ref(database,"users/" + uid + `/posts`), (snapshot) => {
       const data = snapshot.val();
+      //check for data
       if(data !== null){
+
+        function RemovePost(){
+          console.log(PostCount.value)
+          let Confirmation = confirm(`Are you sure you want to delete #${PostCount.value} Post`)
+          console.log(Object.keys(data)[PostCount.value])
+          console.log(Confirmation)
+          if(Confirmation === true){
+            remove(ref(database, "users/" + uid + "/posts" + `/${Object.keys(data)[PostCount.value-1]}`))
+          }
+        }
+        document.getElementById("Delete").addEventListener("click",RemovePost)
+
         output.innerHTML = ""
+        PostCount.innerHTML = ""
         for(let j = 0; j < Object.keys(data).length; j++){
           let keys = Object.keys(data)[j]
           output.innerHTML += "<tr><td>"+ (j+1) +"</td><td>"+data[keys].Title+"</td><td>"+data[keys].Category+"</td><td>"+data[keys].Description+"</td><td>"+data[keys].Price+"</td><td><img height='100' width = '150'src="+data[keys].Images+"></td></tr>";
+          PostCount.innerHTML += "<option>" + (j+1) + "</option>"
         }
+      }
+      else {
+        PostCount.innerHTML += "<option>" + "--There are no posts--" + "</option>" 
       }
     })
 
@@ -127,6 +150,7 @@ document.getElementById("signOut").addEventListener("click", () =>{
     signOut(auth).then(() => {
         console.log("Signed out")
         output.innerHTML = ""
+        PostCount.innerHTML = ""
         window.location.reload();
 
       }).catch((error) => {
@@ -135,9 +159,8 @@ document.getElementById("signOut").addEventListener("click", () =>{
 })
 
 
-// function RemoveFromTable(){
-//   document.querySelector(".table").deleteRow(i)
-//   i-=1;
-// }
 
-// document.getElementById("Delete").addEventListener("click",RemoveFromTable)
+
+// const name = async (event) => {
+//   preventdefault
+// }
