@@ -74,6 +74,8 @@ let Images = document.getElementById("Images");
 let output = document.getElementById("tbody");
 let PostCount = document.getElementById("PostCount")
 
+let DeleteBtn = document.getElementById("Delete")
+
 // check if user is logged in
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -110,19 +112,18 @@ onAuthStateChanged(auth, (user) => {
     //Prints out all posts of user
     onValue(ref(database,"users/" + uid + `/posts`), (snapshot) => {
       const data = snapshot.val();
+
+      DeleteBtn.addEventListener("click",() => {
+        let Confirmation = false
+        Confirmation = confirm(`Are you sure you want to delete #${PostCount.value} Post`)
+        console.log(Object.keys(data)[PostCount.value])
+        console.log(Confirmation)
+        if(Confirmation == true){
+          remove(ref(database, "users/" + uid + "/posts" + `/${Object.keys(data)[PostCount.value-1]}`))
+        }
+      })
       //check for data
       if(data !== null){
-
-        function RemovePost(){
-          console.log(PostCount.value)
-          let Confirmation = confirm(`Are you sure you want to delete #${PostCount.value} Post`)
-          console.log(Object.keys(data)[PostCount.value])
-          console.log(Confirmation)
-          if(Confirmation === true){
-            remove(ref(database, "users/" + uid + "/posts" + `/${Object.keys(data)[PostCount.value-1]}`))
-          }
-        }
-        document.getElementById("Delete").addEventListener("click",RemovePost)
 
         output.innerHTML = ""
         PostCount.innerHTML = ""
@@ -133,6 +134,8 @@ onAuthStateChanged(auth, (user) => {
         }
       }
       else {
+        output.innerHTML = ""
+        PostCount.innerHTML = ""
         PostCount.innerHTML += "<option>" + "--There are no posts--" + "</option>" 
       }
     })
