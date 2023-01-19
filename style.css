@@ -125,8 +125,9 @@
   }
 
   #signOut {
-    float: right;
-  }  
+    margin-left: 80px;
+    margin-bottom: 50px;
+  }
 
   #MainDiv {
     background-color: white;
@@ -135,6 +136,11 @@
   thead {
     background-color: rgb(236, 235, 235);
   }
+
+  #top-right-buttons {
+    float: right;
+  }
+
 
   /* select {
     height: 30px;

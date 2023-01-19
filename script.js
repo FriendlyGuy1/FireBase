@@ -1,71 +1,20 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-import { getDatabase, set ,ref,update,onValue,push,remove} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
-import { firebaseConfig } from "./firebase.js";
+import { getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+import { getDatabase, set ,ref,onValue,push,remove} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { firebaseConfig } from "./scripts/firebase.js";
 
 const app =initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const auth = getAuth();
 
 import { registerNewUser } from "./scripts/Register.js";
-// register
-// const registerNewUser = () =>{
+import {loginUser} from "./scripts/Login.js";
+import {SignOut} from "./scripts/SignOut.js"
 
-//     const email = document.getElementById("register_email").value
-//     const password = document.getElementById("register_password").value
-//     const username = document.getElementById("register_username").value
-
-//     createUserWithEmailAndPassword(auth, email, password)
-
-//     .then((userCredential) => {
-//     // Signed up 
-//         const user = userCredential.user;
-
-//         const LoginTime = new Date()
-//         set(ref(database, "users/" + user.uid), {
-//             user_email: email,
-//             user_username: username,
-//             role: "another_user",
-//             last_login: LoginTime
-//         });
-
-//         console.log("user created")
-
-//   })
-//     .catch((error) => {
-//         console.log(error)
-//   });
-// }
-
-
-
+// Register
 document.getElementById("signUp").addEventListener("click",registerNewUser)
 
-
-// login
-const loginUser = () => {
-    const login_email = document.getElementById("login_email").value
-    const login_password = document.getElementById("login_password").value
-
-    signInWithEmailAndPassword(auth, login_email,login_password)
-
-    .then((userCredential) => {
-        // Signed in 
-            const user = userCredential.user;
-            const LoginTime = new Date()
-            update(ref(database, "users/" + user.uid), {
-                last_login: LoginTime
-            })
-            console.log(user,"Login Successful")
-
-    
-      })
-        .catch((error) => {
-            console.log(error)
-      });
-}
-
-
+// Login
 document.getElementById("signIn").addEventListener("click",loginUser)
 
 let Title = document.getElementById("Title");
@@ -79,10 +28,15 @@ let PostCount = document.getElementById("PostCount")
 
 let DeleteBtn = document.getElementById("Delete")
 
+document.getElementById("AdminPanel").style.display="none"
+
 // check if user is logged in
 onAuthStateChanged(auth, (user) => {
   if (user) {
     const uid = user.uid;
+
+    console.log(user)
+
     console.log("user is logged in")    
     document.getElementById("login-box").style.display="none"
     document.getElementById("MainDiv").style.display="block"
@@ -111,22 +65,44 @@ onAuthStateChanged(auth, (user) => {
         });
       }
     })
-    
     //Prints out all posts of user
     onValue(ref(database,"users/" + uid + `/posts`), (snapshot) => {
+      
       const data = snapshot.val();
 
-      DeleteBtn.addEventListener("click",() => {
-        let Confirmation = false
-        Confirmation = confirm(`Are you sure you want to delete #${PostCount.value} Post`)
-        console.log(Object.keys(data)[PostCount.value-1])
-        console.log(Confirmation)
-        if(Confirmation == true){
-          remove(ref(database, "users/" + uid + "/posts" + `/${Object.keys(data)[PostCount.value-1]}`))
+      onValue(ref(database,"users/" + uid), (snapshot) => {
+        const data = snapshot.val()
+        if(data.role === "admin"){
+          document.getElementById("AdminPanel").style.display="block"
+          console.log("hello admin")
+          document.getElementById("AdminPanel").addEventListener("click", () => {
+            window.location.href="./AdminPanel/admin.html"
+            })
         }
+        else {
+          console.log("hello user")
+        }
+  
       })
+      
       //check for data
       if(data !== null){
+
+        // DeleteBtn.addEventListener("click",() => {
+        //   console.log(PostCount.value)
+        //   if(isNaN(PostCount.value)){
+        //     console.log(Object.keys(data)[PostCount.value])
+        //     alert("You have no posts available")
+        //   }else {
+        //     let Confirmation = false
+        //     Confirmation = confirm(`Are you sure you want to delete #${PostCount.value} Post`)
+        //     console.log(Confirmation)
+        //     if(Confirmation == true){
+        //       remove(ref(database, "users/" + uid + "/posts" + `/${Object.keys(data)[PostCount.value-1]}`))
+        //       console.log(Object.keys(data)[PostCount.value-1])
+        //     }
+        //   }
+        // })
 
         output.innerHTML = ""
         PostCount.innerHTML = ""
@@ -137,6 +113,9 @@ onAuthStateChanged(auth, (user) => {
         }
       }
       else {
+        DeleteBtn.addEventListener("click", () => {
+          alert("You have no posts available")
+        })
         output.innerHTML = ""
         PostCount.innerHTML = ""
         PostCount.innerHTML += "<option>" + "--There are no posts--" + "</option>" 
@@ -151,19 +130,8 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-// sign out
-document.getElementById("signOut").addEventListener("click", () =>{
-    signOut(auth).then(() => {
-        console.log("Signed out")
-        output.innerHTML = ""
-        PostCount.innerHTML = ""
-        window.location.reload();
-
-      }).catch((error) => {
-        console.log(error)
-      });
-})
-
+// Sign Out
+document.getElementById("signOut").addEventListener("click", SignOut)
 
 
 

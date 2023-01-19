@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword,getAuth} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-import { firebaseConfig } from "../firebase.js";
+import { firebaseConfig } from "./firebase.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
 import { getDatabase, set ,ref} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
@@ -33,7 +33,15 @@ const registerNewUser = () =>{
 
   })
     .catch((error) => {
-        console.log(error)
+        if(error.code == "auth/email-already-in-use") {
+            alert("The email address is already in use");
+        }else if (error.code == "auth/invalid-email") {
+            alert("The email address is not valid.");
+        } else if (error.code == "auth/operation-not-allowed") {
+            alert("Operation not allowed.");
+        } else if (error.code == "auth/weak-password") {
+            alert("The password is too weak.");
+        }
   });
 }
 
