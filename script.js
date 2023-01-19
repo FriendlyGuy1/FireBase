@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 import { getDatabase, set ,ref,update,onValue,push,remove} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 import { firebaseConfig } from "./firebase.js";
 
@@ -7,34 +7,37 @@ const app =initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const auth = getAuth();
 
+import { registerNewUser } from "./scripts/Register.js";
 // register
-const registerNewUser = () =>{
+// const registerNewUser = () =>{
 
-    const email = document.getElementById("register_email").value
-    const password = document.getElementById("register_password").value
-    const username = document.getElementById("register_username").value
+//     const email = document.getElementById("register_email").value
+//     const password = document.getElementById("register_password").value
+//     const username = document.getElementById("register_username").value
 
-    createUserWithEmailAndPassword(auth, email, password)
+//     createUserWithEmailAndPassword(auth, email, password)
 
-    .then((userCredential) => {
-    // Signed up 
-        const user = userCredential.user;
+//     .then((userCredential) => {
+//     // Signed up 
+//         const user = userCredential.user;
 
-        const LoginTime = new Date()
-        set(ref(database, "users/" + user.uid), {
-            user_email: email,
-            user_username: username,
-            role: "another_user",
-            last_login: LoginTime
-        });
+//         const LoginTime = new Date()
+//         set(ref(database, "users/" + user.uid), {
+//             user_email: email,
+//             user_username: username,
+//             role: "another_user",
+//             last_login: LoginTime
+//         });
 
-        console.log("user created")
+//         console.log("user created")
 
-  })
-    .catch((error) => {
-        console.log(error)
-  });
-}
+//   })
+//     .catch((error) => {
+//         console.log(error)
+//   });
+// }
+
+
 
 document.getElementById("signUp").addEventListener("click",registerNewUser)
 
@@ -116,7 +119,7 @@ onAuthStateChanged(auth, (user) => {
       DeleteBtn.addEventListener("click",() => {
         let Confirmation = false
         Confirmation = confirm(`Are you sure you want to delete #${PostCount.value} Post`)
-        console.log(Object.keys(data)[PostCount.value])
+        console.log(Object.keys(data)[PostCount.value-1])
         console.log(Confirmation)
         if(Confirmation == true){
           remove(ref(database, "users/" + uid + "/posts" + `/${Object.keys(data)[PostCount.value-1]}`))
