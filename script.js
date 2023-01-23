@@ -11,6 +11,7 @@ import { registerNewUser } from "./scripts/Register.js";
 import {loginUser} from "./scripts/Login.js";
 import {SignOut} from "./scripts/SignOut.js"
 
+
 // Register
 document.getElementById("signUp").addEventListener("click",registerNewUser)
 
@@ -28,17 +29,72 @@ let PostCount = document.getElementById("PostCount")
 
 let DeleteBtn = document.getElementById("Delete")
 
+
+//Admin//
+document.getElementById("BackToMain").addEventListener("click", ()=> {
+  document.getElementById("login-box").style.display="none"
+  document.getElementById("AdminDiv").style.display="none"
+  document.getElementById("MainDiv").style.display="block"
+})
+
 document.getElementById("AdminPanel").style.display="none"
+
+let CategoryInput = document.getElementById("CategoryInp")
+let SubmitBtn = document.getElementById("SubmitCategory")
+
+SubmitBtn.addEventListener("click", ()=>{
+
+  console.log(auth.currentUser)
+  if(CategoryInput.value === ""){
+    alert("Input cant be empty!")
+  }
+  else{
+    push(ref(database, 'users/' + "/Categories"), {
+      Categories: CategoryInput.value
+    });
+  }
+})
+
+onValue(ref(database, "users/" + "/Categories"), (snapshot) =>{
+  const data = snapshot.val()
+  document.getElementById("Category").innerHTML = ""
+  for(let j = 0; j < Object.keys(data).length; j++){
+    let keys = Object.keys(data)[j]
+    document.getElementById("Category").innerHTML += "<option>" + data[keys].Categories + "</option>"
+  }
+})
+
+onValue(ref(database, "users/"), (snapshot) =>{
+  const data= snapshot.val()
+  document.getElementById("tbodyAdmin").innerHTML = ""
+  let Count = 0
+  for(let j = 1; j<Object.keys(data).length;j++){
+    let keys = Object.keys(data)[j]
+    onValue(ref(database, "users/" + keys + "/posts"), (snapshot)=>{
+      const data = snapshot.val()
+      if(data !== null){
+
+        for(let k= 0; k<Object.keys(data).length;k++){
+          Count+=1
+          let keys = Object.keys(data)[k]
+          document.getElementById("tbodyAdmin").innerHTML += "<tr><td>"+ (Count) +"</td><td>"+data[keys].Title+"</td><td>"+data[keys].Category+"</td><td>"+data[keys].Description+"</td><td>"+data[keys].Price+"</td><td><img height='100' width = '150'src="+data[keys].Images+"></td></tr>";
+        }
+      }
+    })
+  }
+})
+//Admin//
+
 
 // check if user is logged in
 onAuthStateChanged(auth, (user) => {
   if (user) {
     const uid = user.uid;
-
     console.log(user)
 
-    console.log("user is logged in")    
+    console.log("user is logged in")
     document.getElementById("login-box").style.display="none"
+    document.getElementById("AdminDiv").style.display="none"
     document.getElementById("MainDiv").style.display="block"
 
     // Input
@@ -61,29 +117,32 @@ onAuthStateChanged(auth, (user) => {
           Category: Category.value,
           Description: Description.value,
           Price: Price.value,
-          Images: Images.value
+          Images: Images.value,
+          UserId: uid
         });
       }
     })
+
+    onValue(ref(database,"users/" + auth.currentUser.uid), (snapshot) => {
+      const data = snapshot.val()
+      if(data.role === "admin"){
+        document.getElementById("AdminPanel").style.display="block"
+        console.log("hello admin")
+        document.getElementById("AdminPanel").addEventListener("click", () => {
+          document.getElementById("MainDiv").style.display="none"
+          document.getElementById("login-box").style.display="none"
+          document.getElementById("AdminDiv").style.display="block"
+
+          })
+      }
+      else {
+        console.log("hello user")
+      }
+    
+    })
     //Prints out all posts of user
     onValue(ref(database,"users/" + uid + `/posts`), (snapshot) => {
-      
       const data = snapshot.val();
-
-      onValue(ref(database,"users/" + uid), (snapshot) => {
-        const data = snapshot.val()
-        if(data.role === "admin"){
-          document.getElementById("AdminPanel").style.display="block"
-          console.log("hello admin")
-          document.getElementById("AdminPanel").addEventListener("click", () => {
-            window.location.href="./AdminPanel/admin.html"
-            })
-        }
-        else {
-          console.log("hello user")
-        }
-  
-      })
       
       //check for data
       if(data !== null){
@@ -121,20 +180,35 @@ onAuthStateChanged(auth, (user) => {
         PostCount.innerHTML += "<option>" + "--There are no posts--" + "</option>" 
       }
     })
-
+    // document.getElementById("MainDiv").style.display="none"
 
   } else {
     //signed out
     document.getElementById("MainDiv").style.display="none"
+    document.getElementById("AdminDiv").style.display="none"
     document.getElementById("login-box").style.display="block"
   }
 });
 
+// onValue(ref(database, "users/"), (snapshot) =>{
+//   const data= snapshot.val()
+//   document.getElementById("tbodyAll").innerHTML = ""
+//   let Count = 0
+//   for(let j = 1; j<Object.keys(data).length;j++){
+//     let keys = Object.keys(data)[j]
+//     onValue(ref(database, "users/" + keys + "/posts"), (snapshot)=>{
+//       const data = snapshot.val()
+//       if(data !== null){
+//         for(let k= 0; k<Object.keys(data).length;k++){
+//           Count+=1
+//           let keys = Object.keys(data)[k]
+//           document.getElementById("tbodyAll").innerHTML += "<tr><td>"+ (Count) +"</td><td>"+data[keys].Title+"</td><td>"+data[keys].Category+"</td><td>"+data[keys].Description+"</td><td>"+data[keys].Price+"</td><td><img height='100' width = '150'src="+data[keys].Images+"></td></tr>";
+//         }
+//       }
+//     })
+//   }
+// })
+
 // Sign Out
 document.getElementById("signOut").addEventListener("click", SignOut)
 
-
-
-// const name = async (event) => {
-//   preventdefault
-// }

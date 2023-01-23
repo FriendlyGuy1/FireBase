@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Market</title>
-    <script src="https://kit.fontawesome.com/59f0aca51a.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/aa92a9e922.js" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -54,7 +54,8 @@
 
               <div class="mb-3">
                 <label for="Category" class="form-label text-secondary">Category</label>
-                <input type="text1" class="form-control" id="Category" placeholder="Enter a Category">
+                <select class="form-control" id="Category">
+                </select>
               </div>
 
               <div class="mb-3">
@@ -106,7 +107,62 @@
 
       </div>
     </div>
+
+    <div id="AdminDiv">
+      <h1>Admin Panel</h1>
+      <div id="top-right-buttons">
+          <button id="BackToMain" class="btn btn-secondary mt-3">Back to website</button>
+      </div>
+  
+  
+      <div id="CategoryInput">
+          <div class="mb-1">
+              <label for="CategoryInput" class="form-label text-secondary">Category</label>
+              <input type="text" class="form-control" id="CategoryInp" placeholder="Enter Category">
+          </div>
+          <button class="btn btn-secondary" type="submit" id="SubmitCategory">Submit</button>
+      </div>
+
+      <div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Title</th>
+              <th scope="col">Category</th>
+              <th scope="col">Description</th>
+              <th scope="col">Price</th>
+              <th scope="col">Images</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyAdmin">
+          </tbody>
+        </table>
+      </div>
+    </div>
     
+
+
+    <!-- <div id="temp">
+      <h1>Ad's</h1>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Category</th>
+            <th scope="col">Description</th>
+            <th scope="col">Price</th>
+            <th scope="col">Images</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyAll">
+        </tbody>
+      </table>
+    </div> -->
+
+
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
       <script type="module" src="script.js"></script>
 </body>
