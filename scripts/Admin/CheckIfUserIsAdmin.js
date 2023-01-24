@@ -7,26 +7,24 @@ const app =initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const auth = getAuth();
 
-
-
 export function IsUserAdmin(){
     onAuthStateChanged(auth, (user) => {
         if(user){
           console.log(auth.currentUser)
           onValue(ref(database,"users/" + auth.currentUser.uid), (snapshot) => {
-          const data = snapshot.val()
-          if(data.role === "admin"){
-            document.getElementById("AdminPanel").style.display="block"
-            console.log("hello admin")
-            document.getElementById("AdminPanel").addEventListener("click", () => {
-              document.getElementById("MainDiv").style.display="none"
-              document.getElementById("login-box").style.display="none"
-              document.getElementById("AdminDiv").style.display="block"
-            })
-        }else {
-          console.log("hello user")
-        }
-      })
+            const data = snapshot.val()
+            if(data.role === "admin"){
+              document.getElementById("AdminPan").addEventListener("click", () => {
+                document.getElementById("MainDiv").style.display="none"
+                document.getElementById("login-box").style.display="none"
+                document.getElementById("AdminDiv").style.display="block"
+              })
+          }else {
+            if(document.getElementById("AdminPan") !== null ){
+              document.getElementById("AdminPan").remove()
+            }
+          }
+        })
         }
       })
 }
