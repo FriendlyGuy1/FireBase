@@ -10,7 +10,8 @@ const auth = getAuth();
 import { registerNewUser } from "./scripts/Register.js";
 import {loginUser} from "./scripts/Login.js";
 import {SignOut} from "./scripts/SignOut.js"
-
+import { BackToMain } from "./scripts/Admin/AdminPanel.js";
+import { IsUserAdmin } from "./scripts/Admin/CheckIfUserIsAdmin.js";
 
 // Register
 document.getElementById("signUp").addEventListener("click",registerNewUser)
@@ -31,11 +32,7 @@ let DeleteBtn = document.getElementById("Delete")
 
 
 //Admin//
-document.getElementById("BackToMain").addEventListener("click", ()=> {
-  document.getElementById("login-box").style.display="none"
-  document.getElementById("AdminDiv").style.display="none"
-  document.getElementById("MainDiv").style.display="block"
-})
+document.getElementById("BackToMain").addEventListener("click", BackToMain)
 
 document.getElementById("AdminPanel").style.display="none"
 
@@ -43,8 +40,6 @@ let CategoryInput = document.getElementById("CategoryInp")
 let SubmitBtn = document.getElementById("SubmitCategory")
 
 SubmitBtn.addEventListener("click", ()=>{
-
-  console.log(auth.currentUser)
   if(CategoryInput.value === ""){
     alert("Input cant be empty!")
   }
@@ -83,6 +78,30 @@ onValue(ref(database, "users/"), (snapshot) =>{
     })
   }
 })
+
+IsUserAdmin()
+// onAuthStateChanged(auth, (user) => {
+//   if(user){
+//     console.log(auth.currentUser)
+//     onValue(ref(database,"users/" + auth.currentUser.uid), (snapshot) => {
+//     const data = snapshot.val()
+//     if(data.role === "admin"){
+//       document.getElementById("AdminPanel").style.display="block"
+//       console.log("hello admin")
+//       document.getElementById("AdminPanel").addEventListener("click", () => {
+//         document.getElementById("MainDiv").style.display="none"
+//         document.getElementById("login-box").style.display="none"
+//         document.getElementById("AdminDiv").style.display="block"
+//       })
+//   }
+//   else {
+//     console.log("hello user")
+//   }
+
+// })
+//   }
+// })
+
 //Admin//
 
 
@@ -123,23 +142,6 @@ onAuthStateChanged(auth, (user) => {
       }
     })
 
-    onValue(ref(database,"users/" + auth.currentUser.uid), (snapshot) => {
-      const data = snapshot.val()
-      if(data.role === "admin"){
-        document.getElementById("AdminPanel").style.display="block"
-        console.log("hello admin")
-        document.getElementById("AdminPanel").addEventListener("click", () => {
-          document.getElementById("MainDiv").style.display="none"
-          document.getElementById("login-box").style.display="none"
-          document.getElementById("AdminDiv").style.display="block"
-
-          })
-      }
-      else {
-        console.log("hello user")
-      }
-    
-    })
     //Prints out all posts of user
     onValue(ref(database,"users/" + uid + `/posts`), (snapshot) => {
       const data = snapshot.val();
