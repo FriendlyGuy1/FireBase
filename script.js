@@ -119,7 +119,21 @@ SubmitBtn.addEventListener("click", ()=>{
 // });
 
 
-
+DeleteBtn.addEventListener("click", ()=>{
+  get(ref(database, `users/${auth.currentUser.uid}/posts` )).then((snapshot) => {
+    if (snapshot.exists()) {
+      const data = snapshot.val()
+      let Confirmation = false
+      Confirmation = confirm(`Are you sure you want to delete #${PostCount.value} Post`)
+        if(Confirmation === true){
+          remove(ref(database, "users/" + auth.currentUser.uid + "/posts" + `/${Object.keys(data)[PostCount.value-1]}`))
+        }
+    }
+    else{
+      alert("You have no posts available")
+    }
+  })
+})
 
 
 
@@ -133,9 +147,11 @@ onAuthStateChanged(auth, (user) => {
     get(ref(database, `users/${uid}` )).then((snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val()
-        document.getElementById("UsernameBtn").append(data.user_username)
-    } else {
-      console.log("No data available");
+        if(data.user_username == ""){
+          document.getElementById("UsernameBtn").append("Guest")
+        }else{
+          document.getElementById("UsernameBtn").append(data.user_username)
+        }
     }
   }).catch((error) => {
     console.error(error);
@@ -172,6 +188,7 @@ onAuthStateChanged(auth, (user) => {
   })
   
   //Admin//
+
 
 
     console.log("user is logged in")
@@ -211,25 +228,6 @@ onAuthStateChanged(auth, (user) => {
       
       //check for data
       if(data !== null){
-        
-        DeleteBtn.addEventListener("click",() => {
-          DeleteBtn.removeEventListener("click",)
-          console.log(PostCount.value)
-          console.log(Object.keys(data)[PostCount.value-1])
-          if(isNaN(PostCount.value)){
-            console.log(Object.keys(data)[PostCount.value])
-            alert("You have no posts available!")
-          }else {
-            let Confirmation = false
-            Confirmation = confirm(`Are you sure you want to delete #${PostCount.value} Post`)
-            console.log(Confirmation)
-            if(Confirmation === true){
-              remove(ref(database, "users/" + uid + "/posts" + `/${Object.keys(data)[PostCount.value-1]}`))
-              console.log(Object.keys(data)[PostCount.value-1])
-            }
-          }
-        }, {once : true});
-
         output.innerHTML = ""
         PostCount.innerHTML = ""
         for(let j = 0; j < Object.keys(data).length; j++){
@@ -240,15 +238,11 @@ onAuthStateChanged(auth, (user) => {
         }
       }
       else {
-        DeleteBtn.addEventListener("click", () => {
-          alert("You have no posts available")
-        })
         output.innerHTML = ""
         PostCount.innerHTML = ""
         PostCount.innerHTML += "<option>" + "--There are no posts--" + "</option>" 
       }
     })
-    // document.getElementById("MainDiv").style.display="none"
 
   } else {
     //signed out
@@ -257,25 +251,6 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById("login-box").style.display="block"
   }
 });
-
-// onValue(ref(database, "users/"), (snapshot) =>{
-//   const data= snapshot.val()
-//   document.getElementById("tbodyAll").innerHTML = ""
-//   let Count = 0
-//   for(let j = 1; j<Object.keys(data).length;j++){
-//     let keys = Object.keys(data)[j]
-//     onValue(ref(database, "users/" + keys + "/posts"), (snapshot)=>{
-//       const data = snapshot.val()
-//       if(data !== null){
-//         for(let k= 0; k<Object.keys(data).length;k++){
-//           Count+=1
-//           let keys = Object.keys(data)[k]
-//           document.getElementById("tbodyAll").innerHTML += "<tr><td>"+ (Count) +"</td><td>"+data[keys].Title+"</td><td>"+data[keys].Category+"</td><td>"+data[keys].Description+"</td><td>"+data[keys].Price+"</td><td><img height='100' width = '150'src="+data[keys].Images+"></td></tr>";
-//         }
-//       }
-//     })
-//   }
-// })
 
 // Sign Out
 document.getElementById("signOut").addEventListener("click", SignOut)
