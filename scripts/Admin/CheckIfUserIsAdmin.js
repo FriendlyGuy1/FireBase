@@ -15,7 +15,9 @@ export function IsUserAdmin(){
             const data = snapshot.val()
             if(data.role === "admin"){
               document.getElementById("AdminPan").addEventListener("click", () => {
-                document.getElementById("MainDiv").style.display="none"
+                document.getElementById("CreatePost").style.display="none"
+                document.getElementById("top-right-buttons").style.display="block"
+                document.getElementById("MainPage").style.display="none"
                 document.getElementById("login-box").style.display="none"
                 document.getElementById("AdminDiv").style.display="block"
               })

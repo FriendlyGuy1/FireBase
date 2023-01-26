@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
 import { getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-import { getDatabase, set ,ref,onValue,push,remove,get,child} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { getDatabase, set ,ref,onValue,push,remove,get,child,update} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 import { firebaseConfig } from "./scripts/firebase.js";
 
 const app =initializeApp(firebaseConfig);
@@ -10,12 +10,10 @@ const auth = getAuth();
 import { registerNewUser } from "./scripts/Register.js";
 import {loginUser} from "./scripts/Login.js";
 import {SignOut} from "./scripts/SignOut.js"
-import { BackToMain } from "./scripts/Admin/AdminPanel.js";
 import { IsUserAdmin } from "./scripts/Admin/CheckIfUserIsAdmin.js";
-
-
-
-
+import {DeleteButton} from "./scripts/DeleteButton.js"
+import {UpdateButton,ConfirmUpdate} from "./scripts/UpdateButton.js"
+import {DisplayCheck} from "./scripts/DisplayCheck.js"
 
 // Register
 document.getElementById("signUp").addEventListener("click",registerNewUser)
@@ -33,10 +31,8 @@ let output = document.getElementById("tbody");
 let PostCount = document.getElementById("PostCount")
 
 let DeleteBtn = document.getElementById("Delete")
-
-
-//Admin//
-document.getElementById("BackToMain").addEventListener("click", BackToMain)
+let UpdateBtn = document.getElementById("Update")
+let ConfirmUpdateBtn = document.getElementById("UpdateInfoBtn")
 
 let CategoryInput = document.getElementById("CategoryInp")
 let SubmitBtn = document.getElementById("SubmitCategory")
@@ -53,89 +49,12 @@ SubmitBtn.addEventListener("click", ()=>{
   }
 })
 
-
-
-// onValue(ref(database, "users/" + "/Categories"), (snapshot) =>{
-//   const data = snapshot.val()
-//   document.getElementById("Category").innerHTML = ""
-//   for(let j = 0; j < Object.keys(data).length; j++){
-//     let keys = Object.keys(data)[j]
-//     document.getElementById("Category").innerHTML += "<option>" + data[keys].Categories + "</option>"
-//   }
-// })
-
-// onValue(ref(database, "users/"), (snapshot) =>{
-//   const data= snapshot.val()
-//   document.getElementById("tbodyAdmin").innerHTML = ""
-//   let Count = 0
-//   for(let j = 1; j<Object.keys(data).length;j++){
-//     let keys = Object.keys(data)[j]
-//     onValue(ref(database, "users/" + keys + "/posts"), (snapshot)=>{
-//       const data = snapshot.val()
-//       if(data !== null){
-
-//         for(let k= 0; k<Object.keys(data).length;k++){
-//           Count+=1
-//           let keys = Object.keys(data)[k]
-//           document.getElementById("tbodyAdmin").innerHTML += "<tr><td>"+ (Count) +"</td><td>"+data[keys].Title+"</td><td>"+data[keys].Category+"</td><td>"+data[keys].Description+"</td><td>"+data[keys].Price+"</td><td><img height='100' width = '150'src="+data[keys].Images+"></td></tr>";
-//         }
-//       }
-//     })
-//   }
-// })
-
-// onAuthStateChanged(auth, (user) => {
-//   if(user){
-//     console.log(auth.currentUser)
-//     onValue(ref(database,"users/" + auth.currentUser.uid), (snapshot) => {
-//     const data = snapshot.val()
-//     if(data.role === "admin"){
-//       document.getElementById("AdminPanel").style.display="block"
-//       console.log("hello admin")
-//       document.getElementById("AdminPanel").addEventListener("click", () => {
-//         document.getElementById("MainDiv").style.display="none"
-//         document.getElementById("login-box").style.display="none"
-//         document.getElementById("AdminDiv").style.display="block"
-//       })
-//   }
-//   else {
-//     console.log("hello user")
-//   }
-
-// })
-//   }
-// })
-
-//Admin//
-// const dbRef = ref(getDatabase());
-// get(child(dbRef, `users/` + auth.currentUser.uid)).then((snapshot) => {
-//   if (snapshot.exists()) {
-//     console.log(snapshot.val());
-//   } else {
-//     console.log("No data available");
-//   }
-// }).catch((error) => {
-//   console.error(error);
-// });
-
-
-DeleteBtn.addEventListener("click", ()=>{
-  get(ref(database, `users/${auth.currentUser.uid}/posts` )).then((snapshot) => {
-    if (snapshot.exists()) {
-      const data = snapshot.val()
-      let Confirmation = false
-      Confirmation = confirm(`Are you sure you want to delete #${PostCount.value} Post`)
-        if(Confirmation === true){
-          remove(ref(database, "users/" + auth.currentUser.uid + "/posts" + `/${Object.keys(data)[PostCount.value-1]}`))
-        }
-    }
-    else{
-      alert("You have no posts available")
-    }
-  })
-})
-
-
+// Delete Button
+DeleteBtn.addEventListener("click", DeleteButton)
+// Update Button
+UpdateBtn.addEventListener("click", UpdateButton)
+// Confirming Info Update
+ConfirmUpdateBtn.addEventListener("click", ConfirmUpdate)
 
 
 // check if user is logged in
@@ -157,44 +76,48 @@ onAuthStateChanged(auth, (user) => {
     console.error(error);
   });
 
-  //Admin//
   onValue(ref(database, "users/" + "/Categories"), (snapshot) =>{
     const data = snapshot.val()
     document.getElementById("Category").innerHTML = ""
     for(let j = 0; j < Object.keys(data).length; j++){
       let keys = Object.keys(data)[j]
       document.getElementById("Category").innerHTML += "<option>" + data[keys].Categories + "</option>"
+      document.getElementById("UpdCategory").innerHTML += "<option>" + data[keys].Categories + "</option>"
     }
   })
   
   onValue(ref(database, "users/"), (snapshot) =>{
-    const data= snapshot.val()
+    const Newdata= snapshot.val()
     document.getElementById("tbodyAdmin").innerHTML = ""
+    document.getElementById("tbodyAll").innerHTML = ""
     let Count = 0
-    for(let j = 1; j<Object.keys(data).length;j++){
-      let keys = Object.keys(data)[j]
+    for(let j = 1; j<Object.keys(Newdata).length;j++){
+      let keys = Object.keys(Newdata)[j]
+      
       onValue(ref(database, "users/" + keys + "/posts"), (snapshot)=>{
         const data = snapshot.val()
         if(data !== null){
-  
           for(let k= 0; k<Object.keys(data).length;k++){
             Count+=1
             let keys = Object.keys(data)[k]
             document.getElementById("tbodyAdmin").innerHTML += "<tr><td>"+ (Count) +"</td><td>"+data[keys].Title+"</td><td>"+data[keys].Category+"</td><td>"+data[keys].Description+"</td><td>"+data[keys].Price+"</td><td><img height='100' width = '150'src="+data[keys].Images+"></td></tr>";
+            if(auth.currentUser.uid === Object.keys(Newdata)[j]){
+              continue;
+            }
+            document.getElementById("tbodyAll").innerHTML += "<tr><td>"+ (Count) +"</td><td>"+data[keys].Title+"</td><td>"+data[keys].Category+"</td><td>"+data[keys].Description+"</td><td>"+data[keys].Price+"</td><td><img height='100' width = '150'src="+data[keys].Images+"></td><td><i class='fa-regular fa-star fa-2x' id='Favorite' onclick='changeIcon(this)'></i>"+"</td></tr>";
           }
         }
       })
     }
   })
-  
-  //Admin//
-
-
 
     console.log("user is logged in")
     document.getElementById("login-box").style.display="none"
     document.getElementById("AdminDiv").style.display="none"
-    document.getElementById("MainDiv").style.display="block"
+    document.getElementById("top-right-buttons").style.display="block"
+    document.getElementById("CreatePost").style.display="none"
+    document.getElementById("MainPage").style.display="block"
+    document.getElementById("FavoritePage").style.display="none"
 
     // Input
     document.getElementById("Insert").addEventListener("click", ()=> {
@@ -233,7 +156,7 @@ onAuthStateChanged(auth, (user) => {
         for(let j = 0; j < Object.keys(data).length; j++){
           let keys = Object.keys(data)[j]
           console.log()
-          output.innerHTML += "<tr><td>"+ (j+1) +"</td><td>"+data[keys].Title+"</td><td>"+data[keys].Category+"</td><td>"+data[keys].Description+"</td><td>"+data[keys].Price+"</td><td><img height='100' width = '100'src="+data[keys].Images+"></td><td><i class='fa-regular fa-star fa-2x' onclick='changeIcon(this)'></i>"+"</td></tr>";
+          output.innerHTML += "<tr><td>"+ (j+1) +"</td><td>"+data[keys].Title+"</td><td>"+data[keys].Category+"</td><td>"+data[keys].Description+"</td><td>"+data[keys].Price+"</td><td><img height='100' width = '150'src="+data[keys].Images+"></td></tr>";
           PostCount.innerHTML += "<option>" + (j+1) + "</option>"
         }
       }
@@ -246,12 +169,23 @@ onAuthStateChanged(auth, (user) => {
 
   } else {
     //signed out
-    document.getElementById("MainDiv").style.display="none"
+    document.getElementById("CreatePost").style.display="none"
     document.getElementById("AdminDiv").style.display="none"
     document.getElementById("login-box").style.display="block"
+    document.getElementById("MainPage").style.display="none"
+    document.getElementById("FavoritePage").style.display="none"
+    document.getElementById("top-right-buttons").style.display="none"
   }
 });
 
 // Sign Out
 document.getElementById("signOut").addEventListener("click", SignOut)
 
+DisplayCheck()
+
+// console.log(document.getElementById("Favorite"))
+// if (document.getElementById("Favorite")){
+//   document.getElementById("Favorite").addEventListener("click",()=>{
+//     console.log("heyo")
+//   })  
+// }

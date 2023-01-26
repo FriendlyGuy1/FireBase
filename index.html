@@ -5,7 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Market</title>
-    <script src="https://kit.fontawesome.com/afc376061c.js" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -33,23 +32,24 @@
         <div class="or">OR</div>
       </div>
     
-      
-    <div id="MainDiv">
       <div id="top-right-buttons">
         <button id="UsernameBtn" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           <div class="dropdown">
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" id="AdminPan" href="#">Admin Panel</a></li>
-              <li><a class="dropdown-item" id="signOut" href="#">Log Out</a></li>
+              <li><a class="dropdown-item" id="MainDiv" href="#"><i class="fa-sharp fa-solid fa-house me-2"></i></i>Main Page</a></li>
+              <li><a class="dropdown-item" id="post" href="#"><i class="fa-solid fa-file-circle-plus me-2"></i>Your Posts</a></li>
+              <li><a class="dropdown-item" id="AdminPan" href="#"><i class="fa-solid fa-hammer me-2"></i>Admin Panel</a></li>
+              
+              <li><a class="dropdown-item" id="signOut" href="#"><i class="fa-solid fa-door-open me-2"></i>Log Out</a></li>
             </ul>
           </div>
           <i class="fa-solid fa-user fa-1x"></i>
         </button>
       </div>
 
+    <div id="CreatePost">
       <div class="posts">
-        <h1>Skelbimai</h1>
+        <h1>Your Posts</h1>
         
         <div class="row">
           <div class="col-md-6 col-sm-12">
@@ -81,8 +81,6 @@
 
               <div class="d-flex justify-content-around mb-4">
                   <button type="submit" class="btn btn-secondary mt-3" id="Insert">Insert</button>
-                  <button type="submit" class="btn btn-secondary mt-3" id="Update">Update</button>
-                  <button type="submit" class="btn btn-secondary mt-3" id="Delete">Delete</button> 
               </div> 
               
           </div>
@@ -90,10 +88,60 @@
 
       <div class="h-100 d-flex align-items-center justify-content-center">
         <label id="PostLabel">Pick Post #</label>
-        <select id="PostCount">
-          
+        <select id="PostCount" class="me-1">
         </select>
+        To  
+        <button type="submit" class="btn btn-secondary ms-2 me-2" id="Delete">Delete</button>
+        Or 
+        <button type="submit" class="btn btn-secondary ms-2" id="Update" data-bs-toggle="modal" data-bs-target="#UpdateModal">Update</button>
       </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="UpdateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Update Info</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+              <div class="mb-3">
+                <label for="Title" class="form-label text-secondary">Title</label>
+                <input type="text1" class="form-control" id="UpdTitle" placeholder="Enter an AD title..">
+            </div>
+
+            <div class="mb-3">
+              <label for="Category" class="form-label text-secondary">Category</label>
+              <select class="form-control" id="UpdCategory">
+              </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="Description" class="form-label text-secondary">Description</label>
+                <input type="text1" class="form-control" id="UpdDescription" placeholder="Enter a Description">
+            </div>
+
+            <div class="mb-3">
+              <label for="Price" class="form-label text-secondary">Price</label>
+              <input type="number" class="form-control" id="UpdPrice" placeholder="Enter a Price">
+            </div>
+
+            <div class="mb-3">
+              <label for="Images" class="form-label text-secondary">Images</label>
+              <input type="url" class="form-control" id="UpdImages" placeholder="Enter image link">
+            </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="CanelUpdateInfoBtn">Cancel</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="UpdateInfoBtn">Update Info</button> 
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Modal -->
+
       <div>
         <table class="table">
           <thead>
@@ -104,7 +152,6 @@
               <th scope="col">Description</th>
               <th scope="col">Price</th>
               <th scope="col">Images</th>
-              <th scope="col">Favorite</th>
             </tr>
           </thead>
           <tbody id="tbody">
@@ -118,10 +165,6 @@
 
     <div id="AdminDiv">
       <h1>Admin Panel</h1>
-      <div id="top-right-buttons">
-          <button id="BackToMain" class="btn btn-secondary mt-3">Back to website</button>
-      </div>
-  
   
       <div id="CategoryInput">
           <div class="mb-1">
@@ -151,7 +194,7 @@
     
 
 
-    <!-- <div id="temp">
+    <div id="MainPage">
       <h1>Ad's</h1>
 
       <table class="table">
@@ -163,18 +206,45 @@
             <th scope="col">Description</th>
             <th scope="col">Price</th>
             <th scope="col">Images</th>
+            <th scope="col">Favorite</th>
           </tr>
         </thead>
         <tbody id="tbodyAll">
         </tbody>
       </table>
-    </div> -->
+    </div>
 
+
+    <div id="FavoritePage">
+      <h1>Your Favorited Posts</h1>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Category</th>
+            <th scope="col">Description</th>
+            <th scope="col">Price</th>
+            <th scope="col">Images</th>
+            <th scope="col">Favorite</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyFavorite">
+        </tbody>
+      </table>
+    </div>
+    </div>
+
+
+
+    
     <script>
       function changeIcon(x) {
         x.classList.toggle("fa-solid");
       }
     </script>
+      <script src="https://kit.fontawesome.com/afc376061c.js" crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
       <script type="module" src="script.js"></script>
 </body>
