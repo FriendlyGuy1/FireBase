@@ -26,7 +26,8 @@ const registerNewUser = () =>{
             user_email: email,
             user_username: username,
             role: "another_user",
-            last_login: LoginTime
+            last_login: LoginTime,
+            Status: "Active"
         });
 
         console.log("user created")

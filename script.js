@@ -42,7 +42,7 @@ SubmitBtn.addEventListener("click", ()=>{
     alert("Input cant be empty!")
   }
   else{
-    push(ref(database, 'users/' + "/Categories"), {
+    push(ref(database,"/Categories"), {
       Categories: CategoryInput.value
     });
     CategoryInput.value = ""
@@ -76,9 +76,37 @@ onAuthStateChanged(auth, (user) => {
     console.error(error);
   });
 
-  onValue(ref(database, "users/" + "/Categories"), (snapshot) =>{
+  document.getElementById("Users").addEventListener("click",()=>{
+    get(ref(database, `users/`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        document.getElementById("tbodyUsers").innerHTML = ""
+        let data = snapshot.val()
+        for(let i=0;i<Object.keys(data).length;i++){
+          let key = Object.keys(data)[i]
+          if(data[key].user_username == ""){
+            data[key].user_username = "Guest"
+          }
+          document.getElementById("tbodyUsers").innerHTML += "<tr><td>"+ (i+1) +"</td><td>"+data[key].user_email+"</td><td>"+data[key].user_username+"</td><td>"+ data[key].role + "</td><td class='Status'>"+ data[key].Status + "</td><td><button class='btn btn-secondary Deactivate' type='submit'>Deactivate</button>"+ "</td></tr>";
+          document.querySelectorAll(".Deactivate").forEach(element=>{
+            element.addEventListener("click",()=>{
+              console.log("hi")
+              console.log(document.querySelector(".Status"))
+              console.log(element.parentElement.parentNode)
+            })
+          })
+        }
+      } else {
+        console.log("No data available");
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  })
+
+  onValue(ref(database,"/Categories"), (snapshot) =>{
     const data = snapshot.val()
     document.getElementById("Category").innerHTML = ""
+    document.getElementById("UpdCategory").innerHTML = ""
     for(let j = 0; j < Object.keys(data).length; j++){
       let keys = Object.keys(data)[j]
       document.getElementById("Category").innerHTML += "<option>" + data[keys].Categories + "</option>"
@@ -93,7 +121,7 @@ onAuthStateChanged(auth, (user) => {
     let Count = 0
     for(let j = 1; j<Object.keys(Newdata).length;j++){
       let keys = Object.keys(Newdata)[j]
-      
+
       onValue(ref(database, "users/" + keys + "/posts"), (snapshot)=>{
         const data = snapshot.val()
         if(data !== null){
@@ -104,18 +132,23 @@ onAuthStateChanged(auth, (user) => {
             if(auth.currentUser.uid === Object.keys(Newdata)[j]){
               continue;
             }
-            document.getElementById("tbodyAll").innerHTML += "<tr><td>"+ (Count) +"</td><td>"+data[keys].Title+"</td><td>"+data[keys].Category+"</td><td>"+data[keys].Description+"</td><td>"+data[keys].Price+"</td><td><img height='100' width = '150'src="+data[keys].Images+"></td><td><i class='fa-regular fa-star fa-2x Favorite'></i>"+"</td></tr>";
+            document.getElementById("tbodyAll").innerHTML += "<tr><td>"+ (Count) +"</td><td>"+data[keys].Title+"</td><td>"+data[keys].Category+"</td><td>"+data[keys].Description+"</td><td>"+data[keys].Price+"</td><td><img height='100' width = '150'src="+data[keys].Images+`></td><td><i class='fa-regular fa-star fa-2x Favorite' id=${keys}></i>`+"</td></tr>";
           }
+
           document.querySelectorAll(".Favorite").forEach(element =>{
             element.addEventListener("click",()=>{
               element.classList.toggle("fa-solid");
             })
+            // if(element.classList.contains("fa-solid")){
+            //   set(ref(database, `users/${uid}/Favorites/${element.id}`), {
+            //     FavoriteId: element.id
+            //   });
+            // }
           })
         }
       })
-    }
+    }    
   })
-
     console.log("user is logged in")
     document.getElementById("login-box").style.display="none"
     document.getElementById("AdminDiv").style.display="none"
@@ -145,7 +178,6 @@ onAuthStateChanged(auth, (user) => {
           Description: Description.value,
           Price: Price.value,
           Images: Images.value,
-          UserId: uid
         });
       }
     })
@@ -187,10 +219,3 @@ onAuthStateChanged(auth, (user) => {
 document.getElementById("signOut").addEventListener("click", SignOut)
 
 DisplayCheck()
-
-// console.log(document.getElementById("Favorite"))
-// if (document.getElementById("Favorite")){
-//   document.getElementById("Favorite").addEventListener("click",()=>{
-//     console.log("heyo")
-//   })  
-// }

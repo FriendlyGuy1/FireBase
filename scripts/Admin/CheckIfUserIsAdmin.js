@@ -20,6 +20,7 @@ export function IsUserAdmin(){
                 document.getElementById("MainPage").style.display="none"
                 document.getElementById("login-box").style.display="none"
                 document.getElementById("AdminDiv").style.display="block"
+                document.getElementById("FavoritePage").style.display="none"
               })
           }else {
             if(document.getElementById("AdminPan") !== null ){

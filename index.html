@@ -36,8 +36,9 @@
         <button id="UsernameBtn" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           <div class="dropdown">
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" id="MainDiv" href="#"><i class="fa-sharp fa-solid fa-house me-2"></i></i>Main Page</a></li>
+              <li><a class="dropdown-item" id="MainDiv" href="#"><i class="fa-sharp fa-solid fa-house me-2"></i>Main Page</a></li>
               <li><a class="dropdown-item" id="post" href="#"><i class="fa-solid fa-file-circle-plus me-2"></i>Your Posts</a></li>
+              <li><a class="dropdown-item" id="FavoritePageBtn" href="#"><i class="fa-solid fa-star me-2"></i>Favorites</a></li>
               <li><a class="dropdown-item" id="AdminPan" href="#"><i class="fa-solid fa-hammer me-2"></i>Admin Panel</a></li>
               
               <li><a class="dropdown-item" id="signOut" href="#"><i class="fa-solid fa-door-open me-2"></i>Log Out</a></li>
@@ -172,6 +173,45 @@
               <input type="text" class="form-control" id="CategoryInp" placeholder="Enter Category">
           </div>
           <button class="btn btn-secondary" type="submit" id="SubmitCategory">Submit</button>
+          <button type="submit" class="btn btn-secondary ms-2" id="Users" data-bs-toggle="modal" data-bs-target="#UserModal">Check Users</button>
+
+
+
+          <!-- Modal -->
+      <div class="modal fade modal-lg" id="UserModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">User List</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div id="users-body">
+
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">username</th>
+                      <th scope="col">role</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Deactivate</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbodyUsers">
+                  </tbody>
+                </table>
+
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="CancelUpdateInfoBtn">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Modal -->
       </div>
 
       <div>
