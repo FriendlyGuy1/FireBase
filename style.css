@@ -155,3 +155,7 @@
   margin-left: auto;
   margin-right: auto;
  }
+
+ h1:hover {
+  cursor: pointer;
+ }

@@ -104,8 +104,13 @@ onAuthStateChanged(auth, (user) => {
             if(auth.currentUser.uid === Object.keys(Newdata)[j]){
               continue;
             }
-            document.getElementById("tbodyAll").innerHTML += "<tr><td>"+ (Count) +"</td><td>"+data[keys].Title+"</td><td>"+data[keys].Category+"</td><td>"+data[keys].Description+"</td><td>"+data[keys].Price+"</td><td><img height='100' width = '150'src="+data[keys].Images+"></td><td><i class='fa-regular fa-star fa-2x' id='Favorite' onclick='changeIcon(this)'></i>"+"</td></tr>";
+            document.getElementById("tbodyAll").innerHTML += "<tr><td>"+ (Count) +"</td><td>"+data[keys].Title+"</td><td>"+data[keys].Category+"</td><td>"+data[keys].Description+"</td><td>"+data[keys].Price+"</td><td><img height='100' width = '150'src="+data[keys].Images+"></td><td><i class='fa-regular fa-star fa-2x Favorite'></i>"+"</td></tr>";
           }
+          document.querySelectorAll(".Favorite").forEach(element =>{
+            element.addEventListener("click",()=>{
+              element.classList.toggle("fa-solid");
+            })
+          })
         }
       })
     }
